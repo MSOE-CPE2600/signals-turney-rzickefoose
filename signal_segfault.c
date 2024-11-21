@@ -4,15 +4,26 @@
  */
 
 /**
- * Modified by:
+ * Modified by: Rose Zickefoose
  * 
- * Brief summary of modifications:
+ * Brief summary of modifications: Made a handler for SIGSEGV
+ *								   Saw that when SIGSEGV is Caught,
+ *								   it catches it an infinite amount of times,
+ *								   creating a infinite loop of catching.
  */
 
 
+#include <signal.h>
 #include <stdio.h>
 
+void handle_signal() {
+	printf("SIGSEGV Caught\n");
+}
+
 int main (int argc, char* argv[]) {
+	// Sets up signal to catch SIGSEGV
+	signal(SIGSEGV, handle_signal);
+
     // Declare a null pointer
     int* i = NULL;
 

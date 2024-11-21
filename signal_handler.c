@@ -4,9 +4,11 @@
  */
 
 /**
- * Modified by:
+ * Modified by: Rose Zickefoose
  * 
- * Brief summary of modifications:
+ * Brief summary of modifications: Added a way to change the behavior
+ *								   of SIGINT. Also added a way to
+ *								   kill the program using SIGKILL.
  */
 
 
@@ -15,23 +17,35 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+
 /**
  * @brief Signal handler for SIGINT - prints a message and exits
  */
+
 void handle_signal() {
     printf("Received a signal\n");
-    exit(1);
 }
 
 int main() {
+	// Changes the behavior of SIGINT
+	struct sigaction action;
+	sigemptyset(&action.sa_mask);
+	sigaddset(&action.sa_mask, SIGINT);
+	action.sa_sigaction = handle_signal;
 
     // Register for the signal
-    signal(SIGINT, handle_signal);
+    sigaction(SIGINT, &action, NULL);
 
     // Wait until a signal is received
     while(1) {
         printf("Sleeping\n");
         sleep(1);
+
+    	// kills the program after 2 sleeps
+    	pid_t pid = fork();
+    	if(pid == 0) {
+    		kill(pid, SIGKILL);
+    	}
     }
 
     return 0;
